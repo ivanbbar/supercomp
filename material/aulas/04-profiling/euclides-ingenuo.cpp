@@ -1,46 +1,48 @@
+#include <cmath>
 #include <iostream>
 #include <vector>
-#include <cmath>
 
-typedef std::vector<std::vector<double>> matriz;
+using namespace std;
 
-void calcula_distancias(matriz &mat, std::vector<double> &x, std::vector<double> &y) {
-    int n = x.size();
+using Matriz = vector<vector<double>>;
+
+void calcula_distancias(Matriz &mat, const vector<double> &x, const vector<double> &y) {
+    const int n = x.size();
+    mat.resize(n, vector<double>(n, 0.0));
+
     for (int i = 0; i < n; i++) {
-        std::vector<double> linha;
-        for (int j = 0; j < n; j++) {
+        for (int j = i + 1; j < n; j++) {
             double dx = x[i] - x[j];
             double dy = y[i] - y[j];
-            linha.push_back((dx*dx + dy*dy));    
+            double dist = dx * dx + dy * dy;
+
+            mat[i][j] = dist;
+            mat[j][i] = dist;
         }
-        mat.push_back(linha);
+    }
+}
+
+void print_matriz(const Matriz &mat) {
+    for (const auto &linha : mat) {
+        for (double el : linha) {
+            cout << el << " ";
+        }
+        cout << "\n";
     }
 }
 
 int main() {
-    matriz mat;
-    std::vector<double> x, y;
     int n;
+    cin >> n;
 
-    std::cin >> n;
-    x.reserve(n);
-    y.reserve(n);
+    vector<double> x(n), y(n);
     for (int i = 0; i < n; i++) {
-        double xt, yt;
-        std::cin >> xt >> yt;
-        x.push_back(xt);
-        y.push_back(yt);
+        cin >> x[i] >> y[i];
     }
 
+    Matriz mat;
     calcula_distancias(mat, x, y);
-    
-
-    for (auto &linha : mat) {
-        for (double el : linha) {
-            std::cout << el << " ";
-        }
-        std::cout << "\n";
-    }
+    print_matriz(mat);
 
     return 0;
 }

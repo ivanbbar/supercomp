@@ -1,0 +1,5 @@
+Ambas as técnicas percorrem o espaço de possíveis soluções:
+
+Em exploitation temos procedimentos determinísticos, que sempre produzirão os mesmos resultados e que podem demorar para convergir para o valor ótimo. Pensando numa abordagem genética, o algoritmo poderia exercer mecanismos de crossovers e mutações o que faria a produção de caminhos próximos aos gerados normalmente para se chegar a soluções similares as encontradas anteriormente, com pequenos ajustes gerados. 
+
+Em Exploration, damos liberdade de escolhas aleatórias, podendo (dependendo da sorte) chegar a um valor ótimo com menos passos. Pensando numa abordagem genética, o algoritmo poderia exercer mecanismos de crossovers e mutações o que faria a produção de novos caminhos para se chegar a soluções que não seriam encontradas convencionalmente. 

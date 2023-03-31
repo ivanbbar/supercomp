@@ -1,0 +1,90 @@
+De acordo com o Valgrind, exibido como apêndice deste arquivo, as etapas mais custosas e que podem ser otimizadas são as seguintes (que juntas representam 70,5% do programa):
+
+   x = (rand()%2) -1;     =>  IR = 6,187,100
+   y = (rand()%2) -1;     =>  IR = 6,187,096
+
+em que x e y sao atribuídos ao resto da divisão por 2 de um valor aleatório menos 1. Essa etapa é muito custosa, pois a função rand() seleciona um número entre 0 e um máximo - que pode ser muito alto. Dessa forma, há um processamento de possivelmente milhares de números possívels para que se chegue a um escolhido aleatoriamente (e isso é feito 2 vezes em cada iteração - para x e para y).
+
+
+Para resolver essa situação, é possível utilizar alocação dinâmica de memória ou evitar alocação de memória que seja desnecessária, como por exemplo no armazenamento de x e y em duas matrizes. 
+
+Além disso, é preferível usar a biblioteca random do C++ do que a rand() do C.
+
+
+
+--------------------------------------------------------------------------------
+Profile data file 'callgrind.out.881756' (creator: callgrind-3.15.0)
+--------------------------------------------------------------------------------
+I1 cache: 
+D1 cache: 
+LL cache: 
+Timerange: Basic block 0 - 3650664
+Trigger: Program termination
+Profiled target:  ./montecarlo (PID 881756, part 1)
+Events recorded:  Ir
+Events shown:     Ir
+Event sort order: Ir
+Thresholds:       99
+Include dirs:     
+User annotated:   montecarlo.cpp
+Auto-annotation:  off
+
+--------------------------------------------------------------------------------
+Ir         
+--------------------------------------------------------------------------------
+17,554,251  PROGRAM TOTALS
+
+--------------------------------------------------------------------------------
+Ir         file:function
+--------------------------------------------------------------------------------
+6,374,196  /build/glibc-SzIz7B/glibc-2.31/stdlib/random_r.c:random_r [/usr/lib/x86_64-linux-gnu/libc-2.31.so]
+4,200,000  /build/glibc-SzIz7B/glibc-2.31/stdlib/random.c:random [/usr/lib/x86_64-linux-gnu/libc-2.31.so]
+2,800,019  montecarlo.cpp:main [/home/user/supercomp/supercomp/prova/montecarlo]
+1,042,105  /build/glibc-SzIz7B/glibc-2.31/elf/dl-lookup.c:_dl_lookup_symbol_x [/usr/lib/x86_64-linux-gnu/ld-2.31.so]
+1,000,000  /build/glibc-SzIz7B/glibc-2.31/stdlib/rand.c:rand [/usr/lib/x86_64-linux-gnu/libc-2.31.so]
+  554,271  /build/glibc-SzIz7B/glibc-2.31/elf/dl-lookup.c:do_lookup_x [/usr/lib/x86_64-linux-gnu/ld-2.31.so]
+  400,000  /build/glibc-SzIz7B/glibc-2.31/stdlib/../sysdeps/unix/sysv/linux/x86/lowlevellock.h:random
+  400,000  ???:0x00000000001090a0 [???]
+  273,638  /build/glibc-SzIz7B/glibc-2.31/elf/../sysdeps/x86_64/dl-machine.h:_dl_relocate_object
+  117,185  /build/glibc-SzIz7B/glibc-2.31/elf/dl-lookup.c:check_match [/usr/lib/x86_64-linux-gnu/ld-2.31.so]
+   90,133  /build/glibc-SzIz7B/glibc-2.31/elf/do-rel.h:_dl_relocate_object
+   79,678  /build/glibc-SzIz7B/glibc-2.31/string/../sysdeps/x86_64/strcmp.S:strcmp [/usr/lib/x86_64-linux-gnu/ld-2.31.so]
+   71,545  /build/glibc-SzIz7B/glibc-2.31/elf/dl-addr.c:_dl_addr [/usr/lib/x86_64-linux-gnu/libc-2.31.so]
+
+--------------------------------------------------------------------------------
+-- User-annotated source: montecarlo.cpp
+--------------------------------------------------------------------------------
+Ir        
+
+        .  
+        .  #include <time.h>
+        .  #include <math.h>
+        .  #include <iostream>
+        .  
+        .  #define ITERATIONS 100000
+        .  
+        4  int main(){
+        .  
+        1   int pi=0;
+        5   srand((unsigned)time(NULL)); 
+    6,817  => ???:0x00000000001090d0 (1x)
+        8  => ???:0x00000000001090c0 (1x)
+  200,000   for (int i=0;i<ITERATIONS; i++){
+        .     double x,y;
+1,000,000     x = (rand()%2) -1;
+6,187,100  => ???:0x00000000001090a0 (100,000x)
+  900,000     y = (rand()%2) -1;
+6,187,096  => ???:0x00000000001090a0 (100,000x)
+  400,000     if (x*x+y*y<=1)
+  300,000        pi++;
+        .   }
+        .  
+        4   std::cout<<pi*4.0/ITERATIONS;
+        .  
+        .   return 0;
+        .  
+        8  }
+--------------------------------------------------------------------------------
+Ir        
+--------------------------------------------------------------------------------
+2,800,022  events annotated

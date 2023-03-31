@@ -1,0 +1,19 @@
+Ler n, <latitude da atividade 1> <longitude da atividade 1>, ... , <latitude da atividade i> <longitude da atividade i>
+define solução = valor máximo permitido para o tipo de variável (double)
+cria perm = permutação autual
+cria javisitei = booleano que indica se ja visitou
+
+F_permutacoes(): 
+
+    Se perm = todas as atividades
+        Se essa solução < solução
+            solução = essa solução
+    se não 
+        For atividade 
+            se javisitei = false 
+                javisitei = true
+            perm "append" atividade 
+        F_permutacoes
+
+F_permutacoes()            
+print(solução)

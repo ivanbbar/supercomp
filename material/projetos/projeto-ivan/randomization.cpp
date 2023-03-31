@@ -3,8 +3,11 @@
 #include <algorithm>
 #include <iomanip>
 #include <bitset>
+#include <random>
 
 using namespace std;
+std::default_random_engine generator;
+std::uniform_int_distribution<int> distribution(-2,5);
 
 struct Movie {
     int id;
@@ -43,13 +46,16 @@ void add_movie_to_marathon(const Movie& movie, const int category, vector<int>& 
 
 void print_selected_movies(const vector<Movie>& movies, const vector<int>& categories, const int num_selected_movies);
 
-void randomization_heuristic(vector<Movie>& movies, vector<int>& categories, vector<int>& num_movies, int& marathon_availability);
+void random_heuristic(vector<Movie>& movies, vector<int>& categories, vector<int>& num_movies, int& marathon_availability);
 
 
 void select_movies(vector<Movie>& movies, vector<int>& categories, vector<int>& num_movies, int& marathon_availability) {
     const int num_movies_total = movies.size();
+    std::default_random_engine rng(10);
+    std::uniform_real_distribution<double> dist(0.0, 1.0);
 
     for (int i = 0; i < num_movies_total; i++) {
+        double random_number = dist(rng);
         const Movie& movie = movies[i];
         const int category = movie.category;
         const std::bitset<24> schedule = movie.schedule;
@@ -58,32 +64,10 @@ void select_movies(vector<Movie>& movies, vector<int>& categories, vector<int>& 
             continue;
         }
 
-        if (marathon_availability == 0 || is_compatible_with_marathon(schedule, marathon_availability)) {
-            bool should_add_movie = true;
-
-            // Check if there are other movies available in the same time slot
-            for (int j = i + 1; j < num_movies_total && movies[j].end_time == movie.end_time; j++) {
-                const Movie& other_movie = movies[j];
-                const int other_category = other_movie.category;
-                const std::bitset<24> other_schedule = other_movie.schedule;
-
-                if (num_movies[other_category - 1] == 0) {
-                    continue;
-                }
-
-                if (is_compatible_with_marathon(other_schedule, marathon_availability)) {
-                    // Randomly choose whether to add this movie or the other movie
-                    int rand_num = rand() % 4; // Generate random number between 0 and 3
-                    if (rand_num == 0) {
-                        should_add_movie = false;
-                        break;
-                    }
-                }
-            }
-
-            if (should_add_movie) {
-                add_movie_to_marathon(movie, category, num_movies, marathon_availability, categories);
-            }
+        if (random_number <= 0.25) {
+            add_movie_to_marathon(movie, category, num_movies, marathon_availability, categories);
+        } else if (marathon_availability == 0 || is_compatible_with_marathon(schedule, marathon_availability)) {
+            add_movie_to_marathon(movie, category, num_movies, marathon_availability, categories);
         }
     }
 }
@@ -110,7 +94,7 @@ void print_selected_movies(const vector<Movie>& movies, const vector<int>& categ
     }
 }
 
-void randomization_heuristic(vector<Movie>& movies, vector<int>& categories, vector<int>& num_movies, int& marathon_availability) {
+void random_heuristic(vector<Movie>& movies, vector<int>& categories, vector<int>& num_movies, int& marathon_availability) {
     select_movies(movies, categories, num_movies, marathon_availability);
     const int num_selected_movies = categories.size();
     print_selected_movies(movies, categories, num_selected_movies);
@@ -162,9 +146,7 @@ int main() {
     vector<int> categories;
     int marathon_availability = 0;
 
-    select_movies(movies, categories, num_movies, marathon_availability);
-
-    print_selected_movies(movies, categories, categories.size());
+    random_heuristic(movies, categories, num_movies, marathon_availability);
 
     return 0;
 }

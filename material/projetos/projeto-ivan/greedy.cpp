@@ -4,8 +4,6 @@
 #include <iomanip>
 #include <bitset>
 
-
-
 using namespace std;
 
 struct Movie {
@@ -139,9 +137,7 @@ int main() {
     vector<int> categories;
     int marathon_availability = 0;
 
-    select_movies(movies, categories, num_movies, marathon_availability);
-
-    print_selected_movies(movies, categories, categories.size());
+    greedy_heuristic(movies, categories, num_movies, marathon_availability);
 
     return 0;
 }

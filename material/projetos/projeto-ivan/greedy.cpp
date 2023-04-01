@@ -81,7 +81,7 @@ void print_selected_movies(const vector<Movie>& movies, const vector<int>& categ
 
     for (int i = 0; i < num_selected_movies; i++) {
         const Movie& movie = movies[i];
-        cout << movie.id << " " << movie.start_time << " " << movie.end_time << " " << categories[i] << endl;
+        cout << movie.id << " " << categories[i] << endl;
     }
 }
 

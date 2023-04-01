@@ -10,7 +10,8 @@ int main(int argc, char *argv[]) {
     int m = atoi(argv[2]);
 
     ofstream inputFile;
-    inputFile.open("input.txt");
+    string filename = "input_" + to_string(n) + "_" + to_string(m) + ".txt";
+    inputFile.open(filename);
     inputFile << n << " " << m << endl;
 
     unsigned seed = chrono::system_clock::now().time_since_epoch().count();

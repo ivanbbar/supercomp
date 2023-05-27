@@ -1,7 +1,7 @@
 #include <vector>
 #include <iostream>
 #include <unistd.h>
-#include <ctime>
+#include <omp.h>
 
 double conta_complexa(int i) {
     return 2 * i;
@@ -14,15 +14,18 @@ int main() {
         vec.push_back(0);  // Inicializa o vetor com elementos vazios
     }
 
-    clock_t start_time = clock();
+    double start_time = omp_get_wtime();
 
+    #pragma omp parallel for
     for (int i = 0; i < N; i++) {
         double valor = conta_complexa(i);
+
+        #pragma omp critical
         vec[i] = valor;
     }
 
-    clock_t end_time = clock();
-    double execution_time = static_cast<double>(end_time - start_time) / CLOCKS_PER_SEC;
+    double end_time = omp_get_wtime();
+    double execution_time = end_time - start_time;
 
     for (int i = 0; i < N; i++) {
         std::cout << vec[i] << " ";
